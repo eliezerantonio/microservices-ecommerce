@@ -13,5 +13,5 @@ import java.util.List;
 public class OrderRequest {
     @NotEmpty(message = "La orden debe contener al menos un item")
     @Valid
-    private List<OrderLineItemsRequest> orderLineItemsDtoList;
+    private List<OrderLineItemsRequest> orderLineItemsList;
 }

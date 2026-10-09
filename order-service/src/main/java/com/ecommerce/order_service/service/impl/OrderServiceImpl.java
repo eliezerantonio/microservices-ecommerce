@@ -33,7 +33,7 @@ public class OrderServiceImpl implements OrderService {
         log.info("Colocando nueva orden...");
 
         // Mapeo manual de items para asegurar la lista
-        List<OrderLineItems> orderLineItems = orderRequest.getOrderLineItemsDtoList()
+        List<OrderLineItems> orderLineItems = orderRequest.getOrderLineItemsList()
                 .stream()
                 .map(orderMapper::toOrderLineItems)
                 .toList();

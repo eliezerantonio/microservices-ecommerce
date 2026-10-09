@@ -7,6 +7,7 @@ import com.ecommerce.order_service.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,4 +32,19 @@ public class OrderController {
         return orderService.getAllOrders();
     }
 
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public OrderResponse getOrdersByOrderId(@PathVariable Long id) {
+        return  orderService.getOrderById(id);
+    }
+
+
+    @DeleteMapping("/{id}")
+  public void deleteOrder(@PathVariable Long id) {
+
+
+        orderService.deleteOrder(id);
+
+
+    }
 }
