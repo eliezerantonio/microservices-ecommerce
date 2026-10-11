@@ -6,7 +6,6 @@ import com.ecommerce.order_service.dto.OrderResponse;
 import com.ecommerce.order_service.exception.ResourceNotFoundException;
 import com.ecommerce.order_service.mapper.OrderMapper;
 import com.ecommerce.order_service.model.Order;
-import com.ecommerce.order_service.model.OrderLineItems;
 import com.ecommerce.order_service.respository.OrderRepository;
 import com.ecommerce.order_service.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -37,15 +36,17 @@ public class OrderServiceImpl implements OrderService {
 
         for (var item : order.getOrderLineItemsList()) {
             String sku = item.getSku();
+            
             Integer quantity = item.getQuantity();
 
-            Boolean inStock = webClientBuilder.build().get().uri("http://localhost:8082/api/v1/inventory/" + sku,
-                    uriBuilder -> uriBuilder.queryParam("quantity", quantity).build()).retrieve().bodyToMono(Boolean.class).block();
 
-
-            if(!Boolean.TRUE.equals(inStock)) {
-                throw  new IllegalArgumentException("No Available stock for product with sku: " + sku);
+            try {
+             webClientBuilder.build().put().uri("http://localhost:8082/api/v1/inventory/reduce/" + sku,uriBuilder -> uriBuilder.queryParam("quantity", quantity).build()).retrieve().toBodilessEntity().block();
+            } catch (Exception e) {
+                log.error("Error while trying to place order {}, {}", sku, quantity, e);
+                throw new IllegalArgumentException("Error while trying to place order");
             }
+
         }
 
 
