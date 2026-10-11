@@ -7,6 +7,6 @@ import org.springframework.web.service.annotation.PutExchange;
 public interface InventoryClient {
 
     @PutExchange("/api/v1/inventory/reduce/{sku}")
-    String reduceStock(@PathVariable String sku, @RequestParam Integer quantity);
+    void reduceStock(@PathVariable String sku, @RequestParam Integer quantity);
 
 }
