@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.util.List;
 
 @Service
@@ -72,8 +71,22 @@ public class InventoryServiceImpl implements InventoryService {
         if (!inventoryRepository.existsById(id)) {
             throw new RuntimeException("Inventory not found: " + id);
         }
-
         inventoryRepository.deleteById(id);
+    }
 
+
+    @Override
+    @Transactional
+    public void reduceStock(String sku, Integer quantity) {
+
+        var inventory = inventoryRepository.findBySku(sku).orElseThrow(() -> new RuntimeException("Product not found: " + sku));
+
+
+        if(inventory.getQuantity() < quantity) {
+            throw new RuntimeException("Quantity exceeded for: " + sku);
+        }
+
+        inventory.setQuantity(inventory.getQuantity() - quantity);
+        inventoryRepository.save(inventory);
     }
 }

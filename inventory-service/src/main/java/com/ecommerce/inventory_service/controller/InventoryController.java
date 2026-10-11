@@ -3,6 +3,7 @@ package com.ecommerce.inventory_service.controller;
 
 import com.ecommerce.inventory_service.dto.InventoryRequest;
 import com.ecommerce.inventory_service.dto.InventoryResponse;
+import com.ecommerce.inventory_service.model.Inventory;
 import com.ecommerce.inventory_service.service.InventoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,14 @@ public class InventoryController {
         return inventoryService.updateInventory(id, inventoryRequest);
     }
 
+    @PutMapping("/reduce/{sku}")
+    @ResponseStatus(HttpStatus.OK)
+    public String   updateStock(@PathVariable String sku, @Valid @RequestParam Integer quantity) {
+
+           inventoryService.reduceStock(sku, quantity);
+
+        return "Updated stock";
+    }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
