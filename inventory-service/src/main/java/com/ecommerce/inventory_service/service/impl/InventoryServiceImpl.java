@@ -87,6 +87,7 @@ public class InventoryServiceImpl implements InventoryService {
         }
 
         inventory.setQuantity(inventory.getQuantity() - quantity);
+
         inventoryRepository.save(inventory);
     }
 }
