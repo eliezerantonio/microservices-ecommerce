@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class OrderLineItemsRequest {
 
-    // No ID (es creación)
+    // No ID (this is a creation)
 
     @NotBlank(message = "El SKU es obligatorio")
     private String sku;

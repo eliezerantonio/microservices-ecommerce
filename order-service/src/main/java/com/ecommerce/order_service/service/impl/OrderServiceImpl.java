@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,25 +27,28 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
+    private final WebClient.Builder webClientBuilder;
 
     @Override
     @Transactional
     public OrderResponse placeOrder(OrderRequest orderRequest) {
-        log.info("Colocando nueva orden...");
+        log.info("Placing new order...");
 
-        // Mapeo manual de items para asegurar la lista
+        // Manual mapping of items to ensure the list
         List<OrderLineItems> orderLineItems = orderRequest.getOrderLineItemsList()
                 .stream()
                 .map(orderMapper::toOrderLineItems)
                 .toList();
 
         Order order = new Order();
+
+
         order.setOrderNumber(UUID.randomUUID().toString());
         order.setOrderLineItemsList(orderLineItems);
 
-        // Guardamos y capturamos la entidad persistida
+        // Save and capture the persisted entity
         Order savedOrder = orderRepository.save(order);
-        log.info("Orden guardada con éxito. ID: {}", savedOrder.getId());
+        log.info("Order saved successfully. ID: {}", savedOrder.getId());
 
         return orderMapper.toOrderResponse(savedOrder);
     }
@@ -61,7 +65,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public OrderResponse getOrderById(Long id) {
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Orden", "id", id));
+                .orElseThrow(() -> new ResourceNotFoundException("Order", "id", id));
         return orderMapper.toOrderResponse(order);
     }
 
@@ -69,9 +73,9 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void deleteOrder(Long id) {
         if (!orderRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Orden", "id", id);
+            throw new ResourceNotFoundException("Order", "id", id);
         }
         orderRepository.deleteById(id);
-        log.info("Orden eliminada. ID: {}", id);
+        log.info("Order deleted. ID: {}", id);
     }
 }

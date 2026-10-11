@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderLineItemsResponse {
-    private Long id; // AQUÍ SÍ VA EL ID
+    private Long id; // The ID IS included here
     private String sku;
     private BigDecimal price;
     private Integer quantity;

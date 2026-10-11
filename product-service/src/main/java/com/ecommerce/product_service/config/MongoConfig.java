@@ -13,8 +13,8 @@ import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 @Configuration
 public class MongoConfig  extends AbstractMongoClientConfiguration {
 
-    // Inyectamos las variables.
-    // La sintaxis es: "${NOMBRE_VARIABLE_EN_SPRING}"
+    // Inject the variables.
+    // The syntax is: "${SPRING_VARIABLE_NAME}"
     @Value("${spring.data.mongodb.host}")
     private String host;
 
@@ -46,7 +46,7 @@ public class MongoConfig  extends AbstractMongoClientConfiguration {
     public MongoClient mongoClient() {
         MongoCredential credential =  MongoCredential.createCredential(username, authDatabase,password.toCharArray());
 
-        // Agregamos un string format para armar la URL dinámicamente
+        // Use String.format to build the URL dynamically
         String connectionString = String.format("mongodb://%s:%d", host, port);
 
         MongoClientSettings settings = MongoClientSettings.builder().applyConnectionString(new ConnectionString(connectionString)).credential(credential).build();

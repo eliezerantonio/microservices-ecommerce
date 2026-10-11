@@ -18,7 +18,7 @@ public class Order {
 
     private String orderNumber;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true) // orphanRemoval es clave para Updates
-    @JoinColumn(name = "order_id") // create a FK en on table de items
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true) // orphanRemoval is key for updates
+    @JoinColumn(name = "order_id") // creates a FK on the items table
     private List<OrderLineItems> orderLineItemsList;
 }

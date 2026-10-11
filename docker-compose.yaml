@@ -10,7 +10,7 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=password
     volumes:
-      - mongo_data:/data/db  # <--- ¡Here we are saving datas!
+      - mongo_data:/data/db  # <--- Here we are saving the data!
 
 
   inventory-db:
@@ -50,8 +50,8 @@ volumes:
 #    ports:
 #      - "8080:8080"
 #    environment:
-#      # Sobrescribimos la config de Spring para usar Docker
-#      # Fíjate: usamos 'mongodb' en lugar de 'localhost'
+#      # Override the Spring config to use Docker
+#      # Note: we use 'mongodb' instead of 'localhost'
 #      - SPRING_DATA_MONGODB_URI=mongodb://root:password@mongodb:27017/product-db?authSource=admin
 #    depends_on:
-#      - mongodb           # Espera a que la BD arranque primero
+#      - mongodb           # Wait for the DB to start first
