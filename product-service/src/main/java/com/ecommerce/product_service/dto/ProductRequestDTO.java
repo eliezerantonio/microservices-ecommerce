@@ -9,7 +9,7 @@ public record ProductRequestDTO(
 
         @NotBlank(message="The name cannot be empty")
         String name,
- String description,
+        String description,
         @NotNull(message="The price is mandatory")
         @Positive(message="The price should be positive")
  BigDecimal price
