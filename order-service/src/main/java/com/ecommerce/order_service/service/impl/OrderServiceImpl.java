@@ -1,14 +1,12 @@
 package com.ecommerce.order_service.service.impl;
 
 
-
 import com.ecommerce.order_service.dto.OrderRequest;
 import com.ecommerce.order_service.dto.OrderResponse;
 import com.ecommerce.order_service.exception.ResourceNotFoundException;
 import com.ecommerce.order_service.mapper.OrderMapper;
 import com.ecommerce.order_service.model.Order;
 import com.ecommerce.order_service.model.OrderLineItems;
-
 import com.ecommerce.order_service.respository.OrderRepository;
 import com.ecommerce.order_service.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -34,17 +32,25 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse placeOrder(OrderRequest orderRequest) {
         log.info("Placing new order...");
 
-        // Manual mapping of items to ensure the list
-        List<OrderLineItems> orderLineItems = orderRequest.getOrderLineItemsList()
-                .stream()
-                .map(orderMapper::toOrderLineItems)
-                .toList();
 
-        Order order = new Order();
+        Order order = orderMapper.toOrder(orderRequest);
+
+        for (var item : order.getOrderLineItemsList()) {
+            String sku = item.getSku();
+            Integer quantity = item.getQuantity();
+
+            Boolean inStock = webClientBuilder.build().get().uri("http://localhost:8082/api/v1/inventory/" + sku,
+                    uriBuilder -> uriBuilder.queryParam("quantity", quantity).build()).retrieve().bodyToMono(Boolean.class).block();
+
+
+            if(!Boolean.TRUE.equals(inStock)) {
+                throw  new IllegalArgumentException("No Available stock for product with sku: " + sku);
+            }
+        }
 
 
         order.setOrderNumber(UUID.randomUUID().toString());
-        order.setOrderLineItemsList(orderLineItems);
+
 
         // Save and capture the persisted entity
         Order savedOrder = orderRepository.save(order);
