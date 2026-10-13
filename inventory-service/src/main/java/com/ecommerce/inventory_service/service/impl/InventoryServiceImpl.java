@@ -8,6 +8,8 @@ import com.ecommerce.inventory_service.repository.InventoryRepository;
 import com.ecommerce.inventory_service.service.InventoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@RefreshScope
 public class InventoryServiceImpl implements InventoryService {
 
 
@@ -23,9 +26,19 @@ public class InventoryServiceImpl implements InventoryService {
     private final InventoryMapper inventoryMapper;
 
 
+    @Value("${inventory.allow-backorders:false}")
+    private boolean allowBackorders;
+
+
     @Override
     @Transactional(readOnly = true)
     public boolean isInStock(String sku, Integer quantity) {
+
+
+        if (allowBackorders) {
+            log.warn("BACKORDER MODE ACTIVE: Authorizing stock to SKU: {}", sku);
+            return false;
+        }
         return inventoryRepository.findBySku(sku).map(inventory -> inventory.getQuantity() >= quantity).orElse(false);
     }
 
@@ -82,7 +95,7 @@ public class InventoryServiceImpl implements InventoryService {
         var inventory = inventoryRepository.findBySku(sku).orElseThrow(() -> new RuntimeException("Product not found: " + sku));
 
 
-        if(inventory.getQuantity() < quantity) {
+        if (inventory.getQuantity() < quantity) {
             throw new RuntimeException("Quantity exceeded for: " + sku);
         }
 

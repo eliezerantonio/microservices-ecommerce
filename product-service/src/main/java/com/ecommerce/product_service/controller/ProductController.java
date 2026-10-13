@@ -23,7 +23,7 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @Value("${app.maintence.message: Operation System}")
+    @Value("${app.maintenance.message: Operation System}")
     private  String maintenanceMessage;
 
 
