@@ -11,6 +11,7 @@ import com.ecommerce.order_service.service.OrderService;
 import com.ecommerce.order_service.service.client.InventoryClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -27,10 +28,19 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final InventoryClient inventoryClient;
 
+    @Value("${order.enabled:true}")
+    private boolean ordersEnabled;
+
     @Override
     @Transactional
     public OrderResponse placeOrder(OrderRequest orderRequest) {
         log.info("Placing new order...");
+
+        if(!ordersEnabled) {
+            log.warn("Orders are disabled by configuration");
+
+            throw  new RuntimeException("Orders are disabled by configuration, try again later.");
+        }
 
 
         Order order = orderMapper.toOrder(orderRequest);
